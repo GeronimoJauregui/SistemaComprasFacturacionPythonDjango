@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import generic
-from .models import Categoria, SubCategoria
-from .forms import CategoriaForm, SubCategoriaForm
+from .models import Categoria, SubCategoria, Marca
+from .forms import CategoriaForm, SubCategoriaForm, MarcaForm
 from django.urls import reverse_lazy
 
 #CRUD DE CATEGORIA#
@@ -78,3 +78,51 @@ class SubCategoriaDel(LoginRequiredMixin, generic.DeleteView):
     template_name = 'inv/catalogos_del.html'
     context_object_name = 'obj'
     success_url = reverse_lazy("inv:subcategoria_list")
+
+#CRUD DE MARCA#
+class MarcaView(LoginRequiredMixin, generic.ListView):
+    model = Marca #Modelo a mostrar
+    template_name = "inv/marca_list.html"
+    context_object_name = "obj"
+    login_url = "bases/login"
+    
+class MarcaNew(LoginRequiredMixin, generic.CreateView):
+    model = Marca
+    template_name = 'inv/marca_form.html'
+    context_object_name = "obj"
+    form_class = MarcaForm
+    success_url = reverse_lazy("inv:marca_list") #Lugar de redirección al dar summit
+    login_url = "bases:login"
+
+    def form_valid(self, form):
+        form.instance.uc = self.request.user #agrega el id del usuario que esta logueado en uc.
+        return super().form_valid(form)
+
+class MarcaEdit(LoginRequiredMixin, generic.UpdateView):
+    model = Marca
+    template_name = 'inv/marca_form.html'
+    context_object_name = "obj"
+    form_class = MarcaForm
+    success_url = reverse_lazy("inv:marca_list") #Lugar de redirección al dar summit
+    login_url = "bases:login"
+
+    def form_valid(self, form):
+        form.instance.um = self.request.user.id #agrega el id del usuario que esta logueado en uc.
+        return super().form_valid(form)
+
+def Marca_Inactivar(request, id):
+    marca= Marca.objects.filter(pk=id).first()
+    contexto={}
+    template_name = 'inv/catalogos_del.html'
+    if not marca:
+        return redirect("inv:marca_list")
+
+    if request.method == "GET":
+        contexto = {'obj': marca}
+    
+    if request.method== "POST":
+        marca.estado = False
+        marca.save()
+        return redirect("inv:marca_list")
+
+    return render(request,template_name,contexto)
