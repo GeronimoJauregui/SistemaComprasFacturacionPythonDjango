@@ -21,6 +21,8 @@
 
     <!-- Custom styles for this page -->
     <link href="{% static 'base/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    <!-- Alerts -->
+    <link href="{% static 'base/vendor/jquery-confirm/jquery-confirm.min.css' %}" rel="stylesheet">
 </head>
 
 <body id="page-top" class="bg-gradient-primary">
@@ -72,6 +74,7 @@
             <a class="collapse-item" href="{% url 'inv:marca_list' %}">Marcas</a>
             <a class="collapse-item" href="{% url 'inv:unidadesmedida_list' %}">Unidades de medida</a>
             <a class="collapse-item" href="{% url 'inv:producto_list' %}">Productos</a>
+            <a class="collapse-item" href="{% url 'cmp:proveedor_list' %}">Proveedores</a>
           </div>
         </div>
       </li>
@@ -231,8 +234,10 @@
   <!-- Page level plugins -->
   <script src="{% static 'base/vendor/datatables/jquery.dataTables.min.js' %}"></script>
   <script src="{% static 'base/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+  <!-- Alerts -->
+  <script src="{% static 'base/vendor/jquery-confirm/jquery-confirm.min.js' %}"></script>
 
-  {% block js_page %} {% endblock js_page %}
+  
 
   {% block control_modal %}
     <script>
@@ -250,8 +255,48 @@
         $('#popup').modal('hide');
         return false;
       }
+
+      function mensajeajax(msg,color='green') {
+        $.confirm({
+          title: '',
+          content: msg,
+          theme: 'material',
+          type: color,
+          autoClose: 'Cerrar|3000',
+          buttons: {
+              Cerrar: {
+                  action: function () {
+                      location.reload();
+                  }
+              }
+          }
+        });
+      }
+      function mensajefuncion(msg,color='green') {
+        if(color=="success"){
+          color = "green";
+        }
+        if(color=="error"){
+          color="red";
+        }
+        $.alert({
+          title:'',
+          theme: 'material',
+          type: color,
+          content: msg
+        }); 
+      }
+
+      {% if messages %}
+        {% for message in messages %}
+          mensajefuncion("{{message}}","{{message.tags}}");
+        {% endfor %}
+      {% endif %}
+      
     </script>
   {% endblock %}
+
+  {% block js_page %} {% endblock js_page %}
 </body>
 
 </html>

@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin  #Mensajes para vistas basadas en clases
 from django.views import generic
 from .models import Categoria, SubCategoria, Marca, UnidadMedida, Producto
 from .forms import CategoriaForm, SubCategoriaForm, MarcaForm, UnidadMedidaForm, ProductoForm
 from django.urls import reverse_lazy
+from django.contrib import messages #Mensajes para vistas basadas en funciones
 
 #CRUD DE CATEGORIA#
 class CategoriaView(LoginRequiredMixin, generic.ListView):
@@ -12,25 +14,27 @@ class CategoriaView(LoginRequiredMixin, generic.ListView):
     context_object_name = "obj"
     login_url = "bases/login"
 
-class CategoriaNew(LoginRequiredMixin, generic.CreateView):
+class CategoriaNew(SuccessMessageMixin,LoginRequiredMixin, generic.CreateView):
     model = Categoria
     template_name = 'inv/categoria_form.html'
     context_object_name = "obj"
     form_class = CategoriaForm
     success_url = reverse_lazy("inv:categoria_list") #Lugar de redirección al dar summit
     login_url = "bases:login"
+    success_message="Categoria creada exitosamente!"
 
     def form_valid(self, form):
         form.instance.uc = self.request.user #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
-class CategoriaEdit(LoginRequiredMixin, generic.UpdateView):
+class CategoriaEdit(SuccessMessageMixin,LoginRequiredMixin, generic.UpdateView):
     model = Categoria
     template_name = 'inv/categoria_form.html'
     context_object_name = "obj"
     form_class = CategoriaForm
     success_url = reverse_lazy("inv:categoria_list") #Lugar de redirección al dar summit
     login_url = "bases:login"
+    success_message="Categoria editada exitosamente!"
 
     def form_valid(self, form):
         form.instance.um = self.request.user.id #agrega el id del usuario que esta logueado en uc.
@@ -123,6 +127,7 @@ def Marca_Inactivar(request, id):
     if request.method== "POST":
         marca.estado = False
         marca.save()
+        messages.success(request, 'Marca inactivada.')
         return redirect("inv:marca_list")
 
     return render(request,template_name,contexto)
