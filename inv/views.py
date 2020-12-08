@@ -1,20 +1,23 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin  #Mensajes para vistas basadas en clases
 from django.views import generic
 from .models import Categoria, SubCategoria, Marca, UnidadMedida, Producto
 from .forms import CategoriaForm, SubCategoriaForm, MarcaForm, UnidadMedidaForm, ProductoForm
 from django.urls import reverse_lazy
 from django.contrib import messages #Mensajes para vistas basadas en funciones
+from bases.views import SinPrivilegios
 
 #CRUD DE CATEGORIA#
-class CategoriaView(LoginRequiredMixin, generic.ListView):
+class CategoriaView(LoginRequiredMixin, SinPrivilegios, generic.ListView):
+    permission_required = "inv.view_categoria"
     model = Categoria #Modelo a mostrar
     template_name = "inv/categoria_list.html"
     context_object_name = "obj"
-    login_url = "bases/login"
+    login_url = "bases:login"
 
-class CategoriaNew(SuccessMessageMixin,LoginRequiredMixin, generic.CreateView):
+class CategoriaNew(SuccessMessageMixin,LoginRequiredMixin, SinPrivilegios, generic.CreateView):
+    permission_required = "inv.add_categoria"
     model = Categoria
     template_name = 'inv/categoria_form.html'
     context_object_name = "obj"
@@ -27,7 +30,8 @@ class CategoriaNew(SuccessMessageMixin,LoginRequiredMixin, generic.CreateView):
         form.instance.uc = self.request.user #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
-class CategoriaEdit(SuccessMessageMixin,LoginRequiredMixin, generic.UpdateView):
+class CategoriaEdit(SuccessMessageMixin,LoginRequiredMixin, SinPrivilegios, generic.UpdateView):
+    permission_required = "inv.change_categoria"
     model = Categoria
     template_name = 'inv/categoria_form.html'
     context_object_name = "obj"
@@ -40,20 +44,23 @@ class CategoriaEdit(SuccessMessageMixin,LoginRequiredMixin, generic.UpdateView):
         form.instance.um = self.request.user.id #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
-class CategoriaDel(LoginRequiredMixin, generic.DeleteView):
+class CategoriaDel(LoginRequiredMixin, SinPrivilegios, generic.DeleteView):
+    permission_required = "inv.delete_categoria"
     model=Categoria
     template_name = 'inv/catalogos_del.html'
     context_object_name = 'obj'
     success_url = reverse_lazy("inv:categoria_list")
 
 #CRUD DE SUB CATEGORIA#
-class SubCategoriaView(LoginRequiredMixin, generic.ListView):
+class SubCategoriaView(LoginRequiredMixin, SinPrivilegios, generic.ListView):
+    permission_required = "inv.view_subcategoria"
     model = SubCategoria #Modelo a mostrar
     template_name = "inv/subcategoria_list.html"
     context_object_name = "obj"
-    login_url = "bases/login"
+    login_url = "bases:login"
 
-class SubCategoriaNew(LoginRequiredMixin, generic.CreateView):
+class SubCategoriaNew(LoginRequiredMixin, SinPrivilegios, generic.CreateView):
+    permission_required = "inv.add_subcategoria"
     model = SubCategoria
     template_name = 'inv/subcategoria_form.html'
     context_object_name = "obj"
@@ -65,7 +72,8 @@ class SubCategoriaNew(LoginRequiredMixin, generic.CreateView):
         form.instance.uc = self.request.user #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
-class SubCategoriaEdit(LoginRequiredMixin, generic.UpdateView):
+class SubCategoriaEdit(LoginRequiredMixin, SinPrivilegios, generic.UpdateView):
+    permission_required = "inv.change_subcategoria"
     model = SubCategoria
     template_name = 'inv/subcategoria_form.html'
     context_object_name = "obj"
@@ -77,20 +85,23 @@ class SubCategoriaEdit(LoginRequiredMixin, generic.UpdateView):
         form.instance.um = self.request.user.id #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
-class SubCategoriaDel(LoginRequiredMixin, generic.DeleteView):
+class SubCategoriaDel(LoginRequiredMixin, SinPrivilegios, generic.DeleteView):
+    permission_required = "inv.delete_subcategoria"
     model= SubCategoria
     template_name = 'inv/catalogos_del.html'
     context_object_name = 'obj'
     success_url = reverse_lazy("inv:subcategoria_list")
 
 #CRUD DE MARCA#
-class MarcaView(LoginRequiredMixin, generic.ListView):
+class MarcaView(LoginRequiredMixin, SinPrivilegios, generic.ListView):
+    permission_required = "inv.view_marca"
     model = Marca #Modelo a mostrar
     template_name = "inv/marca_list.html"
     context_object_name = "obj"
-    login_url = "bases/login"
+    login_url = "bases:login"
     
-class MarcaNew(LoginRequiredMixin, generic.CreateView):
+class MarcaNew(LoginRequiredMixin, SinPrivilegios, generic.CreateView):
+    permission_required = "inv.add_marca"
     model = Marca
     template_name = 'inv/marca_form.html'
     context_object_name = "obj"
@@ -102,7 +113,8 @@ class MarcaNew(LoginRequiredMixin, generic.CreateView):
         form.instance.uc = self.request.user #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
-class MarcaEdit(LoginRequiredMixin, generic.UpdateView):
+class MarcaEdit(LoginRequiredMixin, SinPrivilegios, generic.UpdateView):
+    permission_required = "inv.change_marca"
     model = Marca
     template_name = 'inv/marca_form.html'
     context_object_name = "obj"
@@ -133,13 +145,15 @@ def Marca_Inactivar(request, id):
     return render(request,template_name,contexto)
 
 #CRUD DE UNIDADES DE MEDIDA#
-class UMView(LoginRequiredMixin, generic.ListView):
+class UMView(LoginRequiredMixin, SinPrivilegios, generic.ListView):
+    permission_required = "inv.view_unidadmedida"
     model = UnidadMedida #Modelo a mostrar
     template_name = "inv/unidadmedida_list.html"
     context_object_name = "obj"
-    login_url = "bases/login"
+    login_url = "bases:login"
 
-class UMNew(LoginRequiredMixin, generic.CreateView):
+class UMNew(LoginRequiredMixin, SinPrivilegios, generic.CreateView):
+    permission_required = "inv.add_unidadmedida"
     model = UnidadMedida
     template_name = 'inv/unidadmedida_form.html'
     context_object_name = "obj"
@@ -151,7 +165,8 @@ class UMNew(LoginRequiredMixin, generic.CreateView):
         form.instance.uc = self.request.user #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
-class UMEdit(LoginRequiredMixin, generic.UpdateView):
+class UMEdit(LoginRequiredMixin, SinPrivilegios, generic.UpdateView):
+    permission_required = "inv.change_unidadmedida"
     model = UnidadMedida
     template_name = 'inv/unidadmedida_form.html'
     context_object_name = "obj"
@@ -181,13 +196,15 @@ def UM_Inactivar(request, id):
     return render(request,template_name,contexto)
 
 #CRUD DE PRODUCTO
-class ProductoView(LoginRequiredMixin, generic.ListView):
+class ProductoView(LoginRequiredMixin, SinPrivilegios, generic.ListView):
+    permission_required = "inv.view_producto"
     model = Producto #Modelo a mostrar
     template_name = "inv/producto_list.html"
     context_object_name = "obj"
-    login_url = "bases/login"
+    login_url = "bases:login"
 
-class ProductoNew(LoginRequiredMixin, generic.CreateView):
+class ProductoNew(LoginRequiredMixin, SinPrivilegios, generic.CreateView):
+    permission_required = "inv.add_producto"
     model = Producto
     template_name = 'inv/producto_form.html'
     context_object_name = "obj"
@@ -199,7 +216,8 @@ class ProductoNew(LoginRequiredMixin, generic.CreateView):
         form.instance.uc = self.request.user #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
-class ProductoEdit(LoginRequiredMixin, generic.UpdateView):
+class ProductoEdit(LoginRequiredMixin, SinPrivilegios, generic.UpdateView):
+    permission_required = "inv.change_producto"
     model = Producto
     template_name = 'inv/producto_form.html'
     context_object_name = "obj"
