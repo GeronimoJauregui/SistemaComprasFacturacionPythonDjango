@@ -8,42 +8,43 @@ from django.urls import reverse_lazy
 from django.http import HttpResponse
 import json
 from bases.views import SinPrivilegios
+from django.contrib.auth.decorators import login_required, permission_required #Para poder poner privilegios (permisos) a funciones
 #CRUD DE PROVEEDORES#
-class ProveedorView(LoginRequiredMixin, SinPrivilegios, generic.ListView):
+class ProveedorView(SinPrivilegios, generic.ListView):
     permission_required = "cmp.view_proveedor"
     model = Proveedor #Modelo a mostrar
     template_name = "cmp/proveedor_list.html"
     context_object_name = "obj"
-    login_url = "bases:login"
 
-class ProveedorNew(LoginRequiredMixin, SinPrivilegios, generic.CreateView):
+class ProveedorNew(SinPrivilegios, generic.CreateView):
     permission_required = "cmp.add_proveedor"
     model = Proveedor
     template_name = 'cmp/proveedor_form.html'
     context_object_name = "obj"
     form_class = ProveedorForm
     success_url = reverse_lazy("cmp:proveedor_list") #Lugar de redirección al dar summit
-    login_url = "bases:login"
+    
 
     def form_valid(self, form):
         form.instance.uc = self.request.user #agrega el id del usuario que esta logueado en uc.
         print(self.request.user.id)
         return super().form_valid(form)
 
-class ProveedorEdit(LoginRequiredMixin, SinPrivilegios, generic.UpdateView):
+class ProveedorEdit(SinPrivilegios, generic.UpdateView):
     permission_required = "cmp.change_proveedor"
     model = Proveedor
     template_name = 'cmp/proveedor_form.html'
     context_object_name = "obj"
     form_class = ProveedorForm
     success_url = reverse_lazy("cmp:proveedor_list") #Lugar de redirección al dar summit
-    login_url = "bases:login"
 
     def form_valid(self, form):
         form.instance.um = self.request.user.id #agrega el id del usuario que esta logueado en uc.
         print(self.request.user.id)
         return super().form_valid(form)
 
+@login_required(login_url='/login/')
+@permission_required("cmp.change_proveedor", login_url='bases:sin_privilegios')
 def ProveedorInactivar(request,id):
     template_name= 'cmp/inactivar.html'
     contexto={}

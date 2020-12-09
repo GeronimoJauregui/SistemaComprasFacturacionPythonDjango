@@ -6,45 +6,44 @@ from .models import Categoria, SubCategoria, Marca, UnidadMedida, Producto
 from .forms import CategoriaForm, SubCategoriaForm, MarcaForm, UnidadMedidaForm, ProductoForm
 from django.urls import reverse_lazy
 from django.contrib import messages #Mensajes para vistas basadas en funciones
-from bases.views import SinPrivilegios
+from bases.views import SinPrivilegios #clase general para los privilegios(permisos) de todas las clases 
+from django.contrib.auth.decorators import login_required, permission_required #Para poder poner privilegios (permisos) a funciones
+
 
 #CRUD DE CATEGORIA#
-class CategoriaView(LoginRequiredMixin, SinPrivilegios, generic.ListView):
+class CategoriaView(SinPrivilegios, generic.ListView):
     permission_required = "inv.view_categoria"
     model = Categoria #Modelo a mostrar
     template_name = "inv/categoria_list.html"
     context_object_name = "obj"
-    login_url = "bases:login"
 
-class CategoriaNew(SuccessMessageMixin,LoginRequiredMixin, SinPrivilegios, generic.CreateView):
+class CategoriaNew(SuccessMessageMixin, SinPrivilegios, generic.CreateView):
     permission_required = "inv.add_categoria"
     model = Categoria
     template_name = 'inv/categoria_form.html'
     context_object_name = "obj"
     form_class = CategoriaForm
     success_url = reverse_lazy("inv:categoria_list") #Lugar de redirección al dar summit
-    login_url = "bases:login"
     success_message="Categoria creada exitosamente!"
 
     def form_valid(self, form):
         form.instance.uc = self.request.user #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
-class CategoriaEdit(SuccessMessageMixin,LoginRequiredMixin, SinPrivilegios, generic.UpdateView):
+class CategoriaEdit(SuccessMessageMixin, SinPrivilegios, generic.UpdateView):
     permission_required = "inv.change_categoria"
     model = Categoria
     template_name = 'inv/categoria_form.html'
     context_object_name = "obj"
     form_class = CategoriaForm
     success_url = reverse_lazy("inv:categoria_list") #Lugar de redirección al dar summit
-    login_url = "bases:login"
     success_message="Categoria editada exitosamente!"
 
     def form_valid(self, form):
         form.instance.um = self.request.user.id #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
-class CategoriaDel(LoginRequiredMixin, SinPrivilegios, generic.DeleteView):
+class CategoriaDel(SinPrivilegios, generic.DeleteView):
     permission_required = "inv.delete_categoria"
     model=Categoria
     template_name = 'inv/catalogos_del.html'
@@ -52,40 +51,37 @@ class CategoriaDel(LoginRequiredMixin, SinPrivilegios, generic.DeleteView):
     success_url = reverse_lazy("inv:categoria_list")
 
 #CRUD DE SUB CATEGORIA#
-class SubCategoriaView(LoginRequiredMixin, SinPrivilegios, generic.ListView):
+class SubCategoriaView(SinPrivilegios, generic.ListView):
     permission_required = "inv.view_subcategoria"
     model = SubCategoria #Modelo a mostrar
     template_name = "inv/subcategoria_list.html"
     context_object_name = "obj"
-    login_url = "bases:login"
 
-class SubCategoriaNew(LoginRequiredMixin, SinPrivilegios, generic.CreateView):
+class SubCategoriaNew(SinPrivilegios, generic.CreateView):
     permission_required = "inv.add_subcategoria"
     model = SubCategoria
     template_name = 'inv/subcategoria_form.html'
     context_object_name = "obj"
     form_class = SubCategoriaForm
     success_url = reverse_lazy("inv:subcategoria_list") #Lugar de redirección al dar summit
-    login_url = "bases:login"
 
     def form_valid(self, form):
         form.instance.uc = self.request.user #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
-class SubCategoriaEdit(LoginRequiredMixin, SinPrivilegios, generic.UpdateView):
+class SubCategoriaEdit(SinPrivilegios, generic.UpdateView):
     permission_required = "inv.change_subcategoria"
     model = SubCategoria
     template_name = 'inv/subcategoria_form.html'
     context_object_name = "obj"
     form_class = SubCategoriaForm
     success_url = reverse_lazy("inv:subcategoria_list") #Lugar de redirección al dar summit
-    login_url = "bases:login"
 
     def form_valid(self, form):
         form.instance.um = self.request.user.id #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
-class SubCategoriaDel(LoginRequiredMixin, SinPrivilegios, generic.DeleteView):
+class SubCategoriaDel(SinPrivilegios, generic.DeleteView):
     permission_required = "inv.delete_subcategoria"
     model= SubCategoria
     template_name = 'inv/catalogos_del.html'
@@ -93,39 +89,38 @@ class SubCategoriaDel(LoginRequiredMixin, SinPrivilegios, generic.DeleteView):
     success_url = reverse_lazy("inv:subcategoria_list")
 
 #CRUD DE MARCA#
-class MarcaView(LoginRequiredMixin, SinPrivilegios, generic.ListView):
+class MarcaView(SinPrivilegios, generic.ListView):
     permission_required = "inv.view_marca"
     model = Marca #Modelo a mostrar
     template_name = "inv/marca_list.html"
     context_object_name = "obj"
-    login_url = "bases:login"
     
-class MarcaNew(LoginRequiredMixin, SinPrivilegios, generic.CreateView):
+class MarcaNew(SinPrivilegios, generic.CreateView):
     permission_required = "inv.add_marca"
     model = Marca
     template_name = 'inv/marca_form.html'
     context_object_name = "obj"
     form_class = MarcaForm
     success_url = reverse_lazy("inv:marca_list") #Lugar de redirección al dar summit
-    login_url = "bases:login"
 
     def form_valid(self, form):
         form.instance.uc = self.request.user #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
-class MarcaEdit(LoginRequiredMixin, SinPrivilegios, generic.UpdateView):
+class MarcaEdit(SinPrivilegios, generic.UpdateView):
     permission_required = "inv.change_marca"
     model = Marca
     template_name = 'inv/marca_form.html'
     context_object_name = "obj"
     form_class = MarcaForm
     success_url = reverse_lazy("inv:marca_list") #Lugar de redirección al dar summit
-    login_url = "bases:login"
 
     def form_valid(self, form):
         form.instance.um = self.request.user.id #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
+@login_required(login_url='/login/')
+@permission_required("inv.change_marca", login_url='bases:sin_privilegios')
 def Marca_Inactivar(request, id):
     marca= Marca.objects.filter(pk=id).first()
     contexto={}
@@ -145,39 +140,38 @@ def Marca_Inactivar(request, id):
     return render(request,template_name,contexto)
 
 #CRUD DE UNIDADES DE MEDIDA#
-class UMView(LoginRequiredMixin, SinPrivilegios, generic.ListView):
+class UMView(SinPrivilegios, generic.ListView):
     permission_required = "inv.view_unidadmedida"
     model = UnidadMedida #Modelo a mostrar
     template_name = "inv/unidadmedida_list.html"
     context_object_name = "obj"
-    login_url = "bases:login"
 
-class UMNew(LoginRequiredMixin, SinPrivilegios, generic.CreateView):
+class UMNew(SinPrivilegios, generic.CreateView):
     permission_required = "inv.add_unidadmedida"
     model = UnidadMedida
     template_name = 'inv/unidadmedida_form.html'
     context_object_name = "obj"
     form_class = UnidadMedidaForm
     success_url = reverse_lazy("inv:unidadesmedida_list") #Lugar de redirección al dar summit
-    login_url = "bases:login"
 
     def form_valid(self, form):
         form.instance.uc = self.request.user #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
-class UMEdit(LoginRequiredMixin, SinPrivilegios, generic.UpdateView):
+class UMEdit(SinPrivilegios, generic.UpdateView):
     permission_required = "inv.change_unidadmedida"
     model = UnidadMedida
     template_name = 'inv/unidadmedida_form.html'
     context_object_name = "obj"
     form_class = UnidadMedidaForm
     success_url = reverse_lazy("inv:unidadesmedida_list") #Lugar de redirección al dar summit
-    login_url = "bases:login"
 
     def form_valid(self, form):
         form.instance.um = self.request.user.id #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
+@login_required(login_url='/login/')
+@permission_required("inv.change_unidadmedida", login_url='bases:sin_privilegios')
 def UM_Inactivar(request, id):
     unidad= UnidadMedida.objects.filter(pk=id).first()
     contexto={}
@@ -196,39 +190,40 @@ def UM_Inactivar(request, id):
     return render(request,template_name,contexto)
 
 #CRUD DE PRODUCTO
-class ProductoView(LoginRequiredMixin, SinPrivilegios, generic.ListView):
+class ProductoView(SinPrivilegios, generic.ListView):
     permission_required = "inv.view_producto"
     model = Producto #Modelo a mostrar
     template_name = "inv/producto_list.html"
     context_object_name = "obj"
-    login_url = "bases:login"
 
-class ProductoNew(LoginRequiredMixin, SinPrivilegios, generic.CreateView):
+class ProductoNew(SinPrivilegios, generic.CreateView):
     permission_required = "inv.add_producto"
     model = Producto
     template_name = 'inv/producto_form.html'
     context_object_name = "obj"
     form_class = ProductoForm
     success_url = reverse_lazy("inv:producto_list") #Lugar de redirección al dar summit
-    login_url = "bases:login"
+    
 
     def form_valid(self, form):
         form.instance.uc = self.request.user #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
-class ProductoEdit(LoginRequiredMixin, SinPrivilegios, generic.UpdateView):
+class ProductoEdit(SinPrivilegios, generic.UpdateView):
     permission_required = "inv.change_producto"
     model = Producto
     template_name = 'inv/producto_form.html'
     context_object_name = "obj"
     form_class = ProductoForm
     success_url = reverse_lazy("inv:producto_list") #Lugar de redirección al dar summit
-    login_url = "bases:login"
+    
 
     def form_valid(self, form):
         form.instance.um = self.request.user.id #agrega el id del usuario que esta logueado en uc.
         return super().form_valid(form)
 
+@login_required(login_url='/login/')
+@permission_required("inv.change_producto", login_url='bases:sin_privilegios')
 def Producto_Inactivar(request, id):
     produc= Producto.objects.filter(pk=id).first()
     contexto={}
