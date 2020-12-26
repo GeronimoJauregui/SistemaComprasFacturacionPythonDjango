@@ -1,5 +1,7 @@
 from django.urls import path
-from .views import ProveedorView, ProveedorNew, ProveedorEdit, ProveedorInactivar
+from .views import ProveedorView, ProveedorNew, ProveedorEdit, ProveedorInactivar,\
+    ComprasView, compras, CompraDetDelete
+from .reportes import reporte_compras, imprimir_compra
 
 urlpatterns = [
     #Rustas para el CRUD de proveedor.
@@ -7,4 +9,13 @@ urlpatterns = [
     path('proveedor/new',ProveedorNew.as_view(), name='proveedor_new'),
     path('proveedor/edit/<int:pk>',ProveedorEdit.as_view(), name='proveedor_edit'),
     path('proveedor/inactivar/<int:id>',ProveedorInactivar, name='proveedor_inactivar'),
+
+    #Rustas para el CRUD de compras.
+    path('compras/',ComprasView.as_view(), name='compras_list'),
+    path('compras/new',compras, name='compras_new'),
+    path('compras/edit/<int:compra_id>',compras, name='compras_edit'),
+    path('compras/<int:compra_id>/delete/<int:pk>',CompraDetDelete.as_view(), name='compras_del'),
+
+    path('compras/listado', reporte_compras, name='compras_print_all'),
+    path('compras/<int:compra_id>/imprimir', imprimir_compra, name='compras_print_one'),
 ]
