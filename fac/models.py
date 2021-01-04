@@ -1,6 +1,6 @@
 from django.db import models
-from bases.models import ClaseModelo
-
+from bases.models import ClaseModelo, ClaseModelo2
+from inv.models import Producto
 class Cliente(ClaseModelo):
     NAT = 'Natural'
     JUR = 'Jurídica'
@@ -34,3 +34,4 @@ class Cliente(ClaseModelo):
 
     class Meta:
         verbose_name_plural = "Clientes"
+
