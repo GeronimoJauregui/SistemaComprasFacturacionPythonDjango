@@ -25,6 +25,9 @@
     <link href="{% static 'base/vendor/jquery-confirm/jquery-confirm.min.css' %}" rel="stylesheet">
     <!-- XDSoft DateTimePicker -->  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />  
+
+  <!-- Bootstrap table -->
+  {% comment %} <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.1/dist/bootstrap-table.min.css"> {% endcomment %}
 </head>
 
 <body id="page-top" class="bg-gradient-primary">
@@ -107,7 +110,10 @@
             {% if perms.inv.view_comprasenc %}
             <a class="collapse-item" href="{% url 'cmp:compras_list' %}">Compras</a>
             {% endif %}
-            
+            <h6 class="collapse-header">Salidas:</h6>
+            {% if perms.inv.view_facturaenc %}
+            <a class="collapse-item" href="{% url 'fac:factura_list' %}">Facturas</a>
+            {% endif %}
           </div>
         </div>
       </li>
@@ -272,6 +278,8 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>    
 
+  <!-- Bootstrap table -->   
+  {% comment %} <script src="https://unpkg.com/bootstrap-table@1.18.1/dist/bootstrap-table.min.js"></script> {% endcomment %}
   {% comment %} Idioma al datetimepicker {% endcomment %}
   <script>  
      $(document).ready(function () {  
