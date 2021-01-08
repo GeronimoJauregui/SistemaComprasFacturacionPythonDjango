@@ -12,6 +12,8 @@ from .forms import ClienteForm
 
 from bases.views import SinPrivilegios
 
+import inv.views as inv
+
 #CRUD DE CLIENTES#
 class ClienteView(SinPrivilegios, generic.ListView):
     permission_required = "fac.view_cliente"
@@ -82,3 +84,7 @@ def facturas(request,id=None):
 
     
     return render(request,template_name,contexto)
+
+
+class ProductoView(inv.ProductoView):
+    template_name="fac/buscar_producto.html"
