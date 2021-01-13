@@ -59,6 +59,9 @@ class FacturaEnc(ClaseModelo2):
     class Meta:
         verbose_name_plural = "Encabezado facturas"
         verbose_name = "Encabezado factura"
+        permissions = [
+            ('sup_caja_facturaenc','Permisos de supervisor de caja encabezado')
+        ]
 
 class FacturaDet(ClaseModelo2):
     factura = models.ForeignKey(FacturaEnc, on_delete=models.CASCADE)
@@ -80,6 +83,9 @@ class FacturaDet(ClaseModelo2):
     class Meta:
         verbose_name_plural = "Detalles facturas"
         verbose_name = "Detalle factura"
+        permissions = [
+            ('sup_caja_facturadet','Permisos de supervisor de caja detalle')
+        ]
 
 @receiver(post_save, sender=FacturaDet)
 def detalle_fac_guardar(sender,instance,**kwargs):
