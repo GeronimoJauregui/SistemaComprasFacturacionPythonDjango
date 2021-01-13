@@ -74,7 +74,7 @@ class FacturaView(SinPrivilegios, generic.ListView):
     
 
 @login_required(login_url='/login/')
-@permission_required("fac.change_facturasenc", login_url='bases:sin_privilegios')
+@permission_required("fac.change_facturaenc", login_url='bases:sin_privilegios')
 def facturas(request,id=None):
     template_name = 'fac/facturas.html'
     
@@ -102,9 +102,9 @@ def facturas(request,id=None):
                 'descuento': enc.descuento,
                 'total': enc.total
             }
-            detalle = FacturaDet.objects.filter(factura=enc)
-
+        detalle = FacturaDet.objects.filter(factura=enc)
         contexto={"enc":encabezado,"det":detalle,"clientes":clientes}
+        return render(request,template_name,contexto)
     if request.method == "POST":
         cliente = request.POST.get("enc_cliente")
         fecha = request.POST.get("fecha")
