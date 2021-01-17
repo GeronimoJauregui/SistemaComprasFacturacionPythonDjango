@@ -6,12 +6,21 @@ from inv.models import Producto
 from .forms import ProveedorForm, ComprasEncForm
 from django.urls import reverse_lazy
 #Para ocupar ajax en la vista.
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import json
 from bases.views import SinPrivilegios
 from django.contrib.auth.decorators import login_required, permission_required #Para poder poner privilegios (permisos) a funciones
 import datetime
 from django.db.models import Sum
+
+class MixinFormInvalid:
+    def form_invalid(self,form):
+        response = super().form_invalid(form)
+        if self.request.is_ajax():
+            return JsonResponse(form.errors, status=400)
+        else:
+            return response
+
 #CRUD DE PROVEEDORES#
 class ProveedorView(SinPrivilegios, generic.ListView):
     permission_required = "cmp.view_proveedor"
@@ -19,7 +28,7 @@ class ProveedorView(SinPrivilegios, generic.ListView):
     template_name = "cmp/proveedor_list.html"
     context_object_name = "obj"
 
-class ProveedorNew(SinPrivilegios, generic.CreateView):
+class ProveedorNew(MixinFormInvalid,SinPrivilegios, generic.CreateView):
     permission_required = "cmp.add_proveedor"
     model = Proveedor
     template_name = 'cmp/proveedor_form.html'
@@ -32,8 +41,8 @@ class ProveedorNew(SinPrivilegios, generic.CreateView):
         form.instance.uc = self.request.user #agrega el id del usuario que esta logueado en uc.
         print(self.request.user.id)
         return super().form_valid(form)
-
-class ProveedorEdit(SinPrivilegios, generic.UpdateView):
+    
+class ProveedorEdit(MixinFormInvalid,SinPrivilegios, generic.UpdateView):
     permission_required = "cmp.change_proveedor"
     model = Proveedor
     template_name = 'cmp/proveedor_form.html'
