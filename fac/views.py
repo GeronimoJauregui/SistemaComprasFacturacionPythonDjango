@@ -16,6 +16,8 @@ from bases.views import SinPrivilegios
 import inv.views as inv
 from inv.models import Producto
 
+from django.contrib.auth import authenticate
+
 #CRUD DE CLIENTES#
 class ClienteView(SinPrivilegios, generic.ListView):
     permission_required = "fac.view_cliente"
@@ -155,3 +157,37 @@ def facturas(request,id=None):
 
 class ProductoView(inv.ProductoView):
     template_name="fac/buscar_producto.html"
+
+def borrar_detalle_factura(request, id):
+    template_name = "fac/factura_borrar_detalle.html"
+
+    det = FacturaDet.objects.get(pk=id)
+    
+    if request.method == "GET":
+        context = {"det":det}
+
+    if request.method == "POST":
+        usr = request.POST.get("usuario")
+        pas = request.POST.get("pass")
+
+        user = authenticate(username = usr, password = pas)
+
+        if not user:
+            return HttpResponse("Usuario o clave incorrecta")
+
+        if not user.is_active:
+            return HttpResponse("Usuario inactivo")
+
+        if user.is_superuser or user.has_perm("fac.sup_caja_facturadet"):
+            det.id = None
+            det.cantidad = (-1 * det.cantidad)
+            det.sub_total = (-1 * det.sub_total)
+            det.descuento = (-1 * det.descuento)
+            det.total = (-1 * det.total)
+            det.save()
+
+            return HttpResponse("ok")
+
+        return HttpResponse("Usuario no autorizado")   
+             
+    return render(request,template_name,context)

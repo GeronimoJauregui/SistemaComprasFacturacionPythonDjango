@@ -113,7 +113,7 @@
             <a class="collapse-item" href="{% url 'cmp:compras_list' %}">Compras</a>
             {% endif %}
             <h6 class="collapse-header">Salidas:</h6>
-            {% if perms.inv.view_facturaenc %}
+            {% if perms.fac.view_facturaenc %}
             <a class="collapse-item" href="{% url 'fac:factura_list' %}">Facturas</a>
             {% endif %}
           </div>
